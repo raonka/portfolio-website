@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ishan Raonka · Engineer moving into Field Robotics</title>
+<meta name="description" content="Engineer and AI builder moving into field robotics. I make code that leaves the screen, picks up sensors, and moves through the real world." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20375%20375%22%3E%3Crect%20width%3D%22375%22%20height%3D%22375%22%20rx%3D%2270%22%20fill%3D%22%230d2922%22/%3E%3Cpath%20fill%3D%22%23ece5d4%22%20d%3D%22M%20207.632812%20205.941406%20L%20314.183594%20114.378906%20L%20314.183594%2037.535156%20L%2052.3125%2037.535156%20L%2052.3125%20220.71875%20L%20117.425781%20167.519531%20L%20117.425781%20101.078125%20L%20237.046875%20101.078125%20L%2052.3125%20253.230469%20L%2052.3125%20337.464844%20L%20157.382812%20247.320312%20L%20240.191406%20337.464844%20L%20323.0625%20337.464844%20Z%22/%3E%3C/svg%3E" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,800;1,400;1,500&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --ink:#0d2922; --ink-2:#123a30;
+    --paper:#ece5d4; --paper-2:#e3dbc6;
+    --haze:#88a497; --haze-dim:#5d7a6d;
+    --signal:#e0a352;
+    --on-dark:#e7e3d6; --on-dark-dim:#a9bcb1;
+    --on-paper:#16271f; --on-paper-dim:#4a5c52;
+    --line-dark:rgba(136,164,151,.22); --line-paper:rgba(22,39,31,.16);
+    --serif:"Spectral",Georgia,serif;
+    --sans:"Inter",system-ui,sans-serif;
+    --mono:"Space Mono",ui-monospace,monospace;
+    --measure:64ch;
+    --pad:clamp(1.25rem,5vw,5rem);
+    --sec:clamp(4.5rem,10vw,8.5rem);
+  }
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+  body{ margin:0; font-family:var(--sans); background:var(--ink); color:var(--on-dark);
+    line-height:1.6; font-size:clamp(1rem,.96rem + .2vw,1.0625rem); -webkit-font-smoothing:antialiased; }
+  a{ color:inherit; } img{ max-width:100%; display:block; }
+  ::selection{ background:var(--signal); color:var(--ink); }
+  section,header{ scroll-margin-top:4.5rem; }
+
+  .eyebrow{ font-family:var(--mono); font-size:.72rem; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--haze); margin:0 0 1.2rem; display:flex; align-items:center; gap:.6rem; }
+  .eyebrow::before{ content:""; width:1.6rem; height:1px; background:var(--haze); opacity:.6; }
+  h1,h2,h3{ font-family:var(--serif); font-weight:600; line-height:1.1; margin:0; }
+  p{ margin:0 0 1.1rem; } p:last-child{ margin-bottom:0; }
+
+  .skip{ position:absolute; left:-999px; top:0; z-index:100; background:var(--signal); color:var(--ink);
+    padding:.6rem 1rem; font-family:var(--mono); font-size:.8rem; border-radius:0 0 4px 0; }
+  .skip:focus{ left:0; }
+
+  /* nav */
+  nav{ position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:.9rem var(--pad); background:rgba(13,41,34,.72); backdrop-filter:blur(10px); border-bottom:1px solid var(--line-dark); }
+  .brand{ display:flex; align-items:center; gap:.6rem; text-decoration:none; color:var(--on-dark); }
+  .brand .logo{ width:24px; height:24px; color:var(--on-dark); transition:color .2s; flex:none; }
+  .brand:hover .logo{ color:var(--signal); }
+  .brand span{ font-family:var(--mono); font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; }
+  .nav-links{ display:flex; gap:clamp(1rem,3vw,2.2rem); }
+  .nav-links a{ font-family:var(--mono); font-size:.74rem; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--on-dark-dim); text-decoration:none; transition:color .2s; }
+  .nav-links a:hover{ color:var(--signal); }
+  @media (max-width:620px){ .nav-links{ display:none; } .brand span{ font-size:.72rem; } }
+
+  section{ padding:var(--sec) var(--pad); }
+  .wrap{ max-width:1180px; margin:0 auto; }
+  .paper{ background:var(--paper); color:var(--on-paper); }
+  .paper .eyebrow{ color:var(--haze-dim); } .paper .eyebrow::before{ background:var(--haze-dim); }
+
+  /* HERO */
+  .hero{ position:relative; min-height:100svh; display:flex; flex-direction:column; justify-content:center;
+    padding-top:6rem; padding-bottom:6rem; overflow:hidden; }
+  .hero-bg{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+  .hero .wrap{ position:relative; z-index:2; width:100%; }
+  .hero-coord{ font-family:var(--mono); font-size:.74rem; letter-spacing:.18em; color:var(--haze); margin-bottom:1.8rem; }
+  .hero-hello{ font-family:var(--serif); font-weight:400; font-size:clamp(1.85rem,1.2rem + 2.3vw,3.2rem);
+    line-height:1.2; letter-spacing:-.005em; max-width:23ch; margin:0 0 1.8rem; }
+  .hero-hello em{ font-style:italic; color:var(--signal); }
+  .hero-sub{ max-width:48ch; color:var(--on-dark-dim); margin:0 0 2.4rem; }
+  .cta-row{ display:flex; flex-wrap:wrap; gap:.9rem; }
+  .btn{ font-family:var(--mono); font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; text-decoration:none;
+    padding:.85rem 1.4rem; border-radius:2px; display:inline-flex; align-items:center; gap:.5rem;
+    transition:transform .15s, background .2s, color .2s, border-color .2s; }
+  .btn-primary{ background:var(--signal); color:var(--ink); font-weight:700; }
+  .btn-primary:hover{ transform:translateY(-2px); }
+  .btn-ghost{ border:1px solid var(--line-dark); color:var(--on-dark); }
+  .btn-ghost:hover{ border-color:var(--signal); color:var(--signal); }
+  .scrollcue{ position:absolute; left:50%; bottom:1.6rem; transform:translateX(-50%); font-family:var(--mono);
+    font-size:.66rem; letter-spacing:.2em; text-transform:uppercase; color:var(--haze-dim); z-index:2;
+    display:flex; flex-direction:column; align-items:center; gap:.4rem; }
+  .scrollcue span{ width:1px; height:34px; background:linear-gradient(var(--haze),transparent); animation:cue 2.2s ease-in-out infinite; }
+  @keyframes cue{ 0%,100%{ opacity:.3; transform:scaleY(.6); } 50%{ opacity:1; transform:scaleY(1); } }
+  /* hero map */
+  .map-ink{ stroke:var(--haze); fill:none; opacity:.34; }
+  .map-faint{ stroke:var(--haze); fill:none; opacity:.18; }
+  .map-amber{ stroke:var(--signal); fill:none; }
+  .route{ stroke:var(--signal); stroke-width:1.6; fill:none; opacity:.85; stroke-linecap:round;
+    stroke-dasharray:1000; stroke-dashoffset:1000; animation:draw 7s linear .6s forwards; }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  .wp{ opacity:0; animation:fadeUp .8s ease forwards; }
+  .wp.q{ animation-delay:1.6s; } .wp.w1{ animation-delay:5.2s; } .wp.w2{ animation-delay:3.4s; }
+  .wp.w3{ animation-delay:2.1s; } .wp.here{ animation-delay:7.0s; } .wp.rune{ animation-delay:4.4s; }
+  @keyframes fadeUp{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none; } }
+  .node-ring{ opacity:0; transform-origin:1185px 320px; animation:nodeIn .5s ease 7.0s forwards, ringpulse 3.4s ease-out 7.6s infinite; }
+  .node-ring.b{ animation-delay:7.0s, 8.7s; }
+  @keyframes nodeIn{ to{ opacity:.85; } }
+  @keyframes ringpulse{ 0%{ opacity:.8; transform:scale(.4);} 70%{opacity:.15;} 100%{ opacity:0; transform:scale(1.15);} }
+  #rover{ opacity:0; animation:roverShow .3s ease .6s forwards; }
+  @keyframes roverShow{ to{ opacity:1; } }
+  .rover-beacon{ animation:beacon 1.6s ease-in-out infinite; transform-origin:center; }
+  @keyframes beacon{ 0%,100%{ opacity:1;} 50%{ opacity:.35;} }
+  .lbl-serif{ font-family:var(--serif); font-style:italic; fill:var(--on-dark); }
+  .lbl-mono{ font-family:var(--mono); fill:var(--signal); letter-spacing:.05em; }
+  .lbl-mono-dim{ font-family:var(--mono); fill:var(--haze); letter-spacing:.08em; }
+  @media (max-width:700px){ .hero-detail{ display:none; } }
+
+  /* PROJECTS */
+  .proj-head h2{ font-size:clamp(2rem,1.4rem + 2.6vw,3.4rem); }
+  .proj-intro{ max-width:var(--measure); color:var(--on-paper-dim); margin:1.4rem 0 2.8rem;
+    font-family:var(--serif); font-size:clamp(1.1rem,1rem + .6vw,1.4rem); line-height:1.5; font-style:italic; }
+  .proj-grid{ display:grid; grid-template-columns:1fr; gap:1.3rem; }
+  @media (min-width:760px){ .proj-grid{ grid-template-columns:1fr 1fr; } }
+  .card{ background:var(--paper-2); color:var(--on-paper); border:1px solid var(--line-paper); border-radius:4px;
+    padding:clamp(1.7rem,3vw,2.4rem); display:flex; flex-direction:column; text-decoration:none;
+    transition:transform .18s, box-shadow .2s, border-color .2s; position:relative; overflow:hidden; }
+  a.card:hover{ transform:translateY(-4px); box-shadow:0 18px 40px -24px rgba(13,41,34,.55); border-color:var(--signal); }
+  .card .num{ font-family:var(--mono); font-size:.72rem; color:var(--haze-dim); letter-spacing:.14em; }
+  .card h3{ font-size:clamp(1.4rem,1.1rem + 1vw,1.85rem); margin:.8rem 0 .7rem; }
+  .card p{ color:var(--on-paper-dim); font-size:.96rem; }
+  .card .tags{ margin-top:auto; padding-top:1.4rem; display:flex; flex-wrap:wrap; gap:.5rem; }
+  .tag{ font-family:var(--mono); font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--on-paper);
+    border:1px solid var(--line-paper); border-radius:99px; padding:.25rem .6rem; }
+  .card.more{ background:transparent; border-style:dashed; align-items:flex-start; justify-content:center; min-height:140px; }
+  .card.more h3{ font-size:1.3rem; } .card.more .arrow{ color:var(--signal); font-family:var(--mono); }
+
+  /* Pack Pucks feature */
+  .feature{ background:var(--ink-2); color:var(--on-dark); border:1px solid var(--line-dark); border-radius:4px;
+    overflow:hidden; display:grid; grid-template-columns:1fr; margin-bottom:1.3rem; }
+  @media (min-width:820px){ .feature{ grid-template-columns:1.08fr .92fr; } }
+  .feature-body{ padding:clamp(1.8rem,3.5vw,3rem); display:flex; flex-direction:column; }
+  .feature .num{ font-family:var(--mono); font-size:.72rem; color:var(--signal); letter-spacing:.14em; }
+  .feature h3{ font-size:clamp(1.6rem,1.2rem + 1.4vw,2.3rem); margin:.8rem 0 1rem; color:var(--on-dark); }
+  .feature p{ color:var(--on-dark-dim); font-size:.97rem; }
+  .feature .tags{ margin:1.3rem 0 0; display:flex; flex-wrap:wrap; gap:.5rem; }
+  .feature .tag{ color:var(--on-dark); border:1px solid var(--line-dark); }
+  .feature-link{ font-family:var(--mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--signal); text-decoration:none; margin-top:1.4rem; align-self:flex-start; }
+  .feature-link:hover{ text-decoration:underline; }
+  .feature-photo{ margin:0; position:relative; min-height:280px; }
+  .feature-photo img{ width:100%; height:100%; object-fit:cover; object-position:center 38%; }
+  .feature-photo figcaption{ position:absolute; left:0; right:0; bottom:0; padding:1.4rem .9rem .7rem;
+    font-family:var(--mono); font-size:.64rem; letter-spacing:.1em; text-transform:uppercase; color:var(--on-dark);
+    background:linear-gradient(transparent, rgba(13,41,34,.9)); }
+
+  /* SKILLS */
+  .skills h2{ font-size:clamp(2rem,1.4rem + 2.6vw,3.4rem); max-width:18ch; }
+  .skills-intro{ max-width:54ch; color:var(--on-dark-dim); margin:1.2rem 0 0; }
+  .skills-list{ list-style:none; margin:2.6rem 0 0; padding:0; }
+  .skills-list li{ display:grid; grid-template-columns:1fr; gap:.35rem; padding:1.3rem 0; border-top:1px solid var(--line-dark); }
+  @media (min-width:680px){ .skills-list li{ grid-template-columns:15rem 1fr; gap:1.5rem; align-items:baseline; } }
+  .skills-list li:last-child{ border-bottom:1px solid var(--line-dark); }
+  .skills-list .lbl{ font-family:var(--mono); font-size:.74rem; letter-spacing:.07em; text-transform:uppercase;
+    color:var(--signal); display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; }
+  .skills-list .val{ color:var(--on-dark); }
+  .cur{ font-family:var(--mono); font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; color:var(--signal);
+    border:1px solid var(--line-dark); border-radius:99px; padding:.14rem .5rem; white-space:nowrap; }
+  .skills-foot{ font-family:var(--mono); font-size:.72rem; letter-spacing:.05em; color:var(--haze); margin-top:1.9rem; }
+
+  /* ABOUT (paper, merged) */
+  .about2 h2{ font-size:clamp(1.8rem,1.3rem + 1.8vw,2.8rem); max-width:24ch; margin-bottom:1.8rem; }
+  .about2-grid{ display:grid; grid-template-columns:1fr; gap:2.4rem; }
+  @media (min-width:860px){ .about2-grid{ grid-template-columns:1.15fr .85fr; gap:4rem; align-items:stretch; } }
+  .about2 p{ color:var(--on-paper-dim); max-width:52ch; }
+  .about2 .facts{ margin:2rem 0 0; display:grid; grid-template-columns:auto 1fr; gap:.5rem 1.2rem;
+    border-top:1px solid var(--line-paper); padding-top:1.4rem; }
+  .about2 .facts dt{ font-family:var(--mono); font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; color:var(--haze-dim); }
+  .about2 .facts dd{ margin:0; color:var(--on-paper); }
+  .about2 .threads{ list-style:none; margin:1.6rem 0 0; padding:0; display:flex; flex-wrap:wrap; gap:.6rem; }
+  .about2 .threads li{ font-family:var(--mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--on-paper-dim); border:1px solid var(--line-paper); border-radius:99px; padding:.35rem .8rem; }
+  .about2-photo{ margin:0; position:relative; }
+  .about2-photo img{ width:100%; height:100%; object-fit:cover; object-position:center 30%;
+    border:1px solid var(--line-paper); border-radius:4px; display:block; }
+  @media (max-width:859px){ .about2-photo img{ height:auto; max-height:520px; } }
+  .about2-photo figcaption{ position:absolute; left:0; right:0; bottom:0; padding:1.4rem .9rem .7rem;
+    font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--on-dark);
+    background:linear-gradient(transparent, rgba(13,41,34,.85)); border-radius:0 0 4px 4px; }
+  .quote-paper{ margin:clamp(2.2rem,4vw,3.2rem) 0 0; font-family:var(--serif); font-style:italic;
+    font-size:clamp(1.3rem,1rem + 1.3vw,1.9rem); line-height:1.35; color:var(--on-paper);
+    border-left:2px solid var(--signal); padding-left:1.4rem; max-width:34ch; }
+  .quote-paper cite{ display:block; font-style:normal; font-family:var(--mono); font-size:.72rem; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--haze-dim); margin-top:1.1rem; }
+
+  /* field notes filmstrip */
+  .fieldnotes{ margin-top:clamp(2.5rem,5vw,4rem); }
+  .fieldnotes .eyebrow{ margin-bottom:1.4rem; }
+  .filmstrip{ display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; }
+  @media (min-width:760px){ .filmstrip{ grid-template-columns:repeat(4,1fr); gap:1.2rem; } }
+  .filmstrip figure{ margin:0; }
+  .filmstrip img{ width:100%; height:auto; aspect-ratio:4/3; object-fit:cover; display:block;
+    border:1px solid var(--line-paper); border-radius:4px; }
+  .filmstrip figcaption{ font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--on-paper-dim); margin-top:.6rem; }
+
+  /* CONTACT (dark) */
+  .contact{ background:var(--ink); color:var(--on-dark); }
+  .contact h2{ font-size:clamp(2.4rem,1.6rem + 4vw,5rem); line-height:1; max-width:14ch; margin-bottom:1.6rem; }
+  .contact .lead{ font-family:var(--serif); font-size:clamp(1.25rem,1rem + 1.1vw,1.7rem); line-height:1.4;
+    color:var(--on-dark); max-width:30ch; margin-bottom:1rem; }
+  .contact .note{ font-family:var(--mono); font-size:.74rem; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--haze); margin-bottom:2.4rem; }
+  .contact-links{ display:flex; flex-wrap:wrap; gap:1.6rem 2.4rem; border-top:1px solid var(--line-dark); padding-top:1.8rem; }
+  .contact-links a{ text-decoration:none; display:flex; flex-direction:column; gap:.2rem; }
+  .contact-links a:hover .cval{ color:var(--signal); }
+  .contact-links .ckey{ font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--haze); }
+  .contact-links .cval{ font-family:var(--serif); font-size:1.25rem; color:var(--on-dark); transition:color .2s; }
+  .contact-links .cval span{ color:var(--signal); }
+
+  /* footer */
+  footer{ background:var(--ink); color:var(--on-dark-dim); padding:2.2rem var(--pad); display:flex; flex-wrap:wrap;
+    gap:.6rem 1.5rem; justify-content:space-between; align-items:center; font-family:var(--mono); font-size:.72rem;
+    letter-spacing:.08em; border-top:1px solid var(--line-dark); }
+  .foot-brand{ display:flex; align-items:center; gap:.5rem; color:var(--on-dark); }
+  .foot-brand .logo-sm{ width:16px; height:16px; color:var(--haze); }
+
+  .reveal{ opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.in{ opacity:1; transform:none; }
+  a:focus-visible,.btn:focus-visible{ outline:2px solid var(--signal); outline-offset:3px; border-radius:2px; }
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
+    .route,.wp,#rover,.node-ring,.rover-beacon,.scrollcue span{ animation:none !important; }
+    .route{ stroke-dashoffset:0; } #rover,.wp{ opacity:1; transform:none; } .node-ring{ opacity:.4; }
+    .reveal{ transition:none; opacity:1; transform:none; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#work">Skip to content</a>
+
+<nav>
+  <a class="brand" href="#top" aria-label="Ishan Raonka, home">
+    <svg class="logo" viewBox="0 0 375 375" aria-hidden="true"><path fill="currentColor" d="M 207.632812 205.941406 L 314.183594 114.378906 L 314.183594 37.535156 L 52.3125 37.535156 L 52.3125 220.71875 L 117.425781 167.519531 L 117.425781 101.078125 L 237.046875 101.078125 L 52.3125 253.230469 L 52.3125 337.464844 L 157.382812 247.320312 L 240.191406 337.464844 L 323.0625 337.464844 Z"/></svg>
+    <span>Ishan Raonka</span>
+  </a>
+  <div class="nav-links">
+    <a href="#work">Work</a>
+    <a href="#skills">Skills</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <svg class="hero-bg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <radialGradient id="glow" cx="70%" cy="44%" r="62%">
+        <stop offset="0%" stop-color="#143e33"/><stop offset="100%" stop-color="#0c2620"/>
+      </radialGradient>
+      <linearGradient id="veil" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#0c2620" stop-opacity="0.96"/>
+        <stop offset="40%" stop-color="#0c2620" stop-opacity="0.7"/>
+        <stop offset="66%" stop-color="#0c2620" stop-opacity="0"/>
+      </linearGradient>
+      <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="7" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter>
+    </defs>
+
+    <rect width="1440" height="900" fill="url(#glow)"/>
+
+    <g fill="#cfe0d6" opacity="0.5">
+      <circle cx="300" cy="120" r="1.1"/><circle cx="520" cy="80" r="1"/><circle cx="760" cy="140" r="1.3"/>
+      <circle cx="1020" cy="90" r="1"/><circle cx="1180" cy="150" r="1.1"/><circle cx="1330" cy="110" r="1"/>
+      <circle cx="180" cy="240" r="1"/><circle cx="640" cy="60" r="1"/><circle cx="900" cy="118" r="1"/>
+      <circle cx="1280" cy="250" r="1.1"/><circle cx="430" cy="170" r="1"/>
+    </g>
+
+    <!-- hand-inked map -->
+    <g filter="url(#rough)">
+      <rect class="map-faint" x="28" y="28" width="1384" height="844" rx="2" stroke-width="1.4"/>
+      <rect class="map-faint" x="38" y="38" width="1364" height="824" rx="2" stroke-width="0.8"/>
+
+      <!-- The Lonely Mountain -->
+      <g class="map-ink" stroke-width="1.7" stroke-linejoin="round">
+        <path d="M832 480 L908 396 L952 436 L1000 268 L1050 436 L1092 396 L1168 480"/>
+        <path stroke-width="1" opacity="0.55" d="M1000 268 L968 430 M1000 268 L1032 430 M908 396 L890 470 M908 396 L926 470 M1092 396 L1074 470 M1092 396 L1110 470"/>
+        <path stroke-width="1" d="M984 322 L1000 296 L1016 322 M978 352 L1000 330 L1022 352"/>
+      </g>
+
+      <!-- smaller peaks (right) -->
+      <g class="map-ink" stroke-width="1.5" stroke-linejoin="round">
+        <path d="M1150 678 L1196 600 L1232 664 L1270 612 L1306 678"/>
+        <path stroke-width="0.9" opacity="0.6" d="M1196 600 L1180 650 M1196 600 L1214 650 M1270 612 L1256 658 M1270 612 L1286 658"/>
+      </g>
+
+      <!-- Chambal river (far left) -->
+      <g class="map-faint" stroke-width="1.3" fill="none" stroke-linecap="round">
+        <path d="M704 470 C742 540 700 600 736 668 C764 722 720 792 748 864"/>
+        <path d="M718 470 C756 540 714 600 750 668 C778 722 734 792 762 864"/>
+        <path stroke-width="0.8" opacity="0.7" d="M724 548 l16 4 M716 640 l16 4 M740 740 l16 4"/>
+      </g>
+
+      <!-- Mukundra Forest (centre) -->
+      <g class="map-faint" stroke-width="1.2" stroke-linecap="round" fill="none">
+        <path d="M958 700 l9 -20 l9 20 M976 708 l9 -20 l9 20 M994 698 l9 -20 l9 20 M970 686 l9 -20 l9 20 M1012 704 l9 -20 l9 20 M1030 694 l9 -20 l9 20 M988 672 l9 -18 l9 18"/>
+      </g>
+
+      <!-- compass rose -->
+      <g transform="translate(1262,168) scale(0.8)">
+        <circle class="map-ink" r="62" stroke-width="1"/>
+        <circle class="map-faint" r="50" stroke-width="0.8"/>
+        <path class="map-ink" stroke-width="1.3" fill="none" d="M0 -62 L9 -9 L62 0 L9 9 L0 62 L-9 9 L-62 0 L-9 -9 Z"/>
+        <path class="map-faint" stroke-width="0.9" d="M0 -42 L42 0 L0 42 L-42 0 Z" transform="rotate(45)"/>
+      </g>
+
+      <!-- the unknown sea (bottom right) -->
+      <g class="map-faint" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.5">
+        <path d="M1090 822 q14 -9 28 0 q14 9 28 0 q14 -9 28 0"/>
+        <path d="M1170 842 q14 -9 28 0 q14 9 28 0"/>
+        <path d="M1110 802 q14 -9 28 0 q14 9 28 0"/>
+      </g>
+      <g class="map-ink" stroke-width="1.4" stroke-linecap="round" fill="none" opacity="0.5">
+        <path d="M1228 818 q12 -16 24 0 q12 16 24 0 q12 -16 24 0"/>
+        <path d="M1300 818 q9 -10 17 -6 M1304 812 l8 -6 M1317 812 l6 -2"/>
+      </g>
+    </g>
+
+    <g class="hero-detail">
+    <!-- the dragon (line illustration, above the mountain) -->
+    <g transform="translate(1054,208)" stroke="#9fbcae" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.62">
+      <!-- body -->
+      <path d="M-22 7 C-8 -3 12 -3 25 9"/>
+      <path d="M-20 10 C-8 4 10 6 24 12"/>
+      <!-- neck + head with open jaw + horn -->
+      <path d="M-22 8 C-30 4 -33 -1 -41 -3"/>
+      <path d="M-41 -3 L-50 -6 L-43 -2 L-50 0 L-42 3"/>
+      <path d="M-40 -4 L-44 -10"/>
+      <circle cx="-38" cy="-3" r="0.9" fill="#9fbcae" stroke="none"/>
+      <!-- bat wing -->
+      <path d="M-8 0 C-20 -26 4 -34 18 -24"/>
+      <path d="M-8 0 L0 -26 M-1 -1 L9 -27 M5 -3 L15 -23"/>
+      <path d="M0 -26 Q4 -20 9 -27 Q12 -20 15 -23"/>
+      <!-- tail curling with barb -->
+      <path d="M25 10 C37 12 45 21 42 31 C40 39 49 42 55 37"/>
+      <path d="M55 37 L51 40 M55 37 L52 31"/>
+      <!-- legs -->
+      <path d="M2 11 l2 9 l7 -2 M-12 9 l1 8 l6 -2"/>
+    </g>
+
+    <!-- runic inscription: 'uncharted' (Elder Futhark) -->
+    <g class="wp rune map-faint" stroke-width="1.4" stroke-linecap="round">
+      <g transform="translate(900,524)"><path d="M0 0 L0 16 M0 0 L10 8 L10 16"/></g>
+      <g transform="translate(926,524)"><path d="M3 0 L3 16 M-1 6 L9 11"/></g>
+      <g transform="translate(950,524)"><path d="M9 0 L1 8 L9 16"/></g>
+      <g transform="translate(972,524)"><path d="M0 0 L0 16 M10 0 L10 16 M0 6 L10 10"/></g>
+      <g transform="translate(998,524)"><path d="M0 0 L0 16 M0 2 L9 7 M0 8 L9 13"/></g>
+      <g transform="translate(1022,524)"><path d="M0 0 L0 16 M0 0 C8 1 8 7 0 8 M0 8 L9 16"/></g>
+      <g transform="translate(1046,524)"><path d="M5 0 L5 16 M5 0 L0 6 M5 0 L10 6"/></g>
+      <g transform="translate(1070,524)"><path d="M0 16 L0 0 M10 16 L10 0 M0 2 L5 7 L10 2"/></g>
+      <g transform="translate(1094,524)"><path d="M0 0 L0 16 M10 0 L10 16 M0 0 L10 16 M0 16 L10 0"/></g>
+    </g>
+
+    <!-- ===== route, waypoints, rover ===== -->
+    <path id="route" class="route" pathLength="1000" d="M700 824 C760 806 800 786 836 766 C894 730 950 706 992 704 C1060 700 1070 652 1018 642 C980 634 960 684 1002 708 C1034 722 1066 702 1082 654 C1102 598 1090 548 1114 506 C1134 470 1160 392 1185 320"/>
+
+    <!-- waypoint marks -->
+    <g class="map-amber" stroke-width="1.4" opacity="0.9">
+      <g class="wp w2"><path d="M1082 654 m-7 0 l14 0 M1082 654 m0 -7 l0 14"/></g>
+    </g>
+    <!-- kachori stall (on the path) -->
+    <g class="wp w3" opacity="0.9">
+      <path class="map-ink" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.85" d="M829 766 l9 -11 l9 11 M832 766 l0 12 l12 0 l0 -12"/>
+      <path class="map-amber" stroke-width="1.1" stroke-linecap="round" d="M835 751 q-3 -5 1 -10 M843 751 q-3 -5 1 -10"/>
+    </g>
+
+    <!-- map labels -->
+    <text class="lbl-serif" x="902" y="512" font-size="22" opacity="0.95">The Lonely Mountain</text>
+    <text class="wp q lbl-serif" x="1112" y="224" font-size="16" fill="#88a497">here be dragons</text>
+    <text class="wp w1 lbl-mono" x="1232" y="700" font-size="13">RIDGE?</text>
+    <text class="wp w3 lbl-serif" x="770" y="788" font-size="18">Kachori Stall</text>
+    <text class="lbl-serif" x="972" y="742" font-size="17" fill="#88a497" opacity="0.85">Mukundra Forest</text>
+    <path id="chambalGuide" d="M716 506 C752 566 708 618 742 686" fill="none" stroke="none"/>
+    <text class="lbl-serif" font-size="16" fill="#88a497" opacity="0.85" letter-spacing="1.5"><textPath href="#chambalGuide" startOffset="5%">Chambal</textPath></text>
+    <text class="wp rune lbl-mono-dim" x="1000" y="556" font-size="9.5" text-anchor="middle" opacity="0.65">&#8220;uncharted&#8221;</text>
+    <text class="wp q lbl-serif" x="1086" y="790" font-size="22" opacity="0.92">Here be questions</text>
+    <text class="wp q lbl-serif" x="1086" y="812" font-size="13" fill="#88a497">terra incognita</text>
+
+    <!-- end node -->
+    <circle class="node-ring"   cx="1185" cy="320" r="14" fill="none" stroke="var(--signal)" stroke-width="1.4"/>
+    <circle class="node-ring b" cx="1185" cy="320" r="26" fill="none" stroke="var(--signal)" stroke-width="1.1"/>
+    <g class="wp here">
+      <!-- shrine marking the real temple coordinates -->
+      <g transform="translate(1185,315)" stroke="#9fbcae" fill="none" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.72">
+        <path d="M-9 0 C-7 -13 -3 -21 0 -27 C3 -21 7 -13 9 0"/>
+        <path stroke-width="0.85" d="M-6 -6 L6 -6 M-4 -12 L4 -12 M-2.6 -17 L2.6 -17"/>
+        <path d="M0 -27 L0 -31"/>
+        <circle cx="0" cy="-32.6" r="1.5" fill="#9fbcae" stroke="none"/>
+        <path d="M-12 0 L12 0 M-10 2.5 L10 2.5"/>
+        <path stroke-width="0.85" d="M-2 0 L-2 -6 L2 -6 L2 0"/>
+      </g>
+      <circle cx="1185" cy="320" r="3.4" fill="var(--signal)"/>
+      <text class="lbl-serif" text-anchor="end" x="1162" y="314" font-size="17" fill="var(--signal)">Here stands Ishan</text>
+      <text class="lbl-mono-dim" text-anchor="end" x="1160" y="332" font-size="9.5">maker of small machines</text>
+    </g>
+
+    <!-- rover -->
+    <g id="rover">
+      <g class="rover-beacon">
+        <path d="M0 -8 L11 0 L0 8 L4 0 Z" fill="var(--signal)"/>
+        <circle r="2.4" fill="#fff7e8"/>
+      </g>
+    </g>
+
+    <text class="lbl-mono-dim" x="1382" y="858" text-anchor="end" font-size="11" opacity="0.7">SURVEY &#183; 25.28962&#176;N 75.93739&#176;E</text>
+
+    </g>
+    <rect width="1440" height="900" fill="url(#veil)"/>
+  </svg>
+  <div class="wrap">
+    <p class="hero-coord">25.28962&deg; N&nbsp;&nbsp;&middot;&nbsp;&nbsp;75.93739&deg; E&nbsp;&nbsp;&middot;&nbsp;&nbsp;LAST FIX: ACQUIRED</p>
+    <h1 class="hero-hello">Hello, I'm Ishan. Engineer, adventurer, and science fanatic, pulled toward computers, nature, and <em>questions nobody's answered yet.</em></h1>
+    <p class="hero-sub">I can make code do clever things on a screen. Now I want it to leave the screen, pick up sensors, and move through the real world. That shift starts with what I've built below.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#work">See the work &rarr;</a>
+      <a class="btn btn-ghost" href="#contact">Get in touch</a>
+    </div>
+  </div>
+  <div class="scrollcue" aria-hidden="true"><span></span>Scroll</div>
+</header>
+
+<!-- WORK -->
+<section class="paper" id="work">
+  <div class="wrap reveal">
+    <div class="proj-head">
+      <p class="eyebrow">&sect; 01 &middot; Selected work</p>
+      <h2>Things I've built and broken.</h2>
+    </div>
+    <p class="proj-intro">One thread runs through these: take something that works in clean conditions, then push it until the real world pushes back. That push is what's pulling me toward field robotics, where almost nothing stays clean.</p>
+
+    <div class="feature">
+      <div class="feature-body">
+        <span class="num">PROJECT 01 &middot; FLAGSHIP</span>
+        <h3>Pack Pucks</h3>
+        <p>Pack Pucks started on a night ride. We were deep off-road in the dark, headlights bouncing off the trees, and it got easy to lose the rider behind you. I started wondering how a handful of cheap radios could keep a moving group aware of each other with no map and no signal.</p>
+        <p>That question became the project: a swarm of LilyGo T3-S3 nodes running SX1280 LoRa, working out peer-to-peer ranging and proximity from the ground up. Along the way came SF/BW tradeoffs, adaptive ranging profiles, and squeezing usable accuracy out of radios that cost almost nothing.</p>
+        <p>Pack Pucks taught me the hard part isn't the radio, it's everything the real world does to the signal. That gap, between what works on the bench and what survives in the field, is what I want to spend a PhD on, starting Fall 2027.</p>
+        <div class="tags">
+          <span class="tag">LoRa SX1280</span><span class="tag">Embedded</span><span class="tag">Ranging</span><span class="tag">Localization</span>
+        </div>
+        <a class="feature-link" href="#" target="_blank" rel="noopener">See the build &rarr;</a>
+      </div>
+      <figure class="feature-photo">
+        <img src="packpucks.jpg" alt="Night off-road ride through forest that sparked the Pack Pucks idea" loading="lazy" width="1100" height="1327" />
+        <figcaption>Where it started &middot; night trail &middot; FMAE Hyderabad </figcaption>
+      </figure>
+    </div>
+
+    <div class="proj-grid">
+      <div class="card">
+        <span class="num">PROJECT 02 &middot; CAPSTONE</span>
+        <h3>Car Brand &amp; Plate Logger</h3>
+        <p>A perception pipeline that reads a car from an image: one model identifies the manufacturer, another detects and reads the number plate, and the result gets logged to a database. My first real taste of making a model deal with messy real-world input instead of clean training data.</p>
+        <div class="tags"><span class="tag">Computer Vision</span><span class="tag">ResNet</span><span class="tag">OpenCV</span><span class="tag">TensorFlow</span></div>
+      </div>
+
+      <a class="card" href="#" target="_blank" rel="noopener">
+        <span class="num">PROJECT 03</span>
+        <h3>Backend at scale</h3>
+        <p>Production REST services at an enterprise bank technology centre, leading the team's move from Spring Boot to Quarkus for faster startup and a path to native images.</p>
+        <div class="tags"><span class="tag">Java</span><span class="tag">Quarkus</span><span class="tag">GraalVM</span></div>
+      </a>
+
+      <a class="card more" href="#" target="_blank" rel="noopener">
+        <span class="num">MORE</span>
+        <h3>Everything else lives on GitHub <span class="arrow">&#8599;</span></h3>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="skills" id="skills">
+  <div class="wrap reveal">
+    <p class="eyebrow">&sect; 02 &middot; What I work with</p>
+    <h2>A software base, aimed at hardware.</h2>
+    <p class="skills-intro">A software and AI foundation I'm now pointing at the physical world. Deepest in code and computer vision, newest in embedded systems and sensors.</p>
+    <ul class="skills-list">
+      <li><span class="lbl">Languages</span><span class="val">C++ &middot; Python &middot; Java</span></li>
+      <li><span class="lbl">AI &amp; perception</span><span class="val">Deep learning &middot; Computer vision (OpenCV) &middot; TensorFlow &middot; Real-time detection (ResNet, MobileNet)</span></li>
+      <li><span class="lbl">Hardware &amp; embedded <span class="cur">building toward</span></span><span class="val">LoRa / SX1280 &middot; Embedded firmware &middot; RF ranging &middot; ESP32</span></li>
+      <li><span class="lbl">Systems &amp; engineering</span><span class="val">Linux &middot; Spring Boot &middot; Quarkus &middot; REST APIs &middot; High-throughput production services</span></li>
+    </ul>
+    <p class="skills-foot">Foundations: B.Tech in CS (ML &amp; Data Analytics) &middot; ML, Stanford &middot; Deep Learning, deeplearning.ai</p>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="paper about2" id="about">
+  <div class="wrap reveal">
+    <p class="eyebrow">&sect; 03 &middot; About</p>
+    <h2>The short version: an engineer who got restless behind a screen.</h2>
+    <div class="about2-grid">
+      <div>
+        <p>I've spent my career writing software, payments systems, APIs, machine-learning models, and I'm good at it. But the work I remember is the work that had to survive contact with something real. Somewhere along the way it clicked: I'd rather aim all of this at the physical world than keep it on a screen.</p>
+        <p>Off the keyboard I climb, ride, and get outdoors as often as I can. I read Stoic and Vedic philosophy to keep my ego on a short leash, and I'm relentlessly curious about how things actually work. Adventure, nature, and code keep turning out to be the same instinct: go where you don't have the map yet, and make one.</p>
+        <dl class="facts">
+          <dt>Now</dt><dd>Software Engineer, Lloyds Technology Centre</dd>
+          <dt>Next</dt><dd>PhD, field robotics, Fall 2027</dd>
+          <dt>Based</dt><dd>Hyderabad, India</dd>
+        </dl>
+        <ul class="threads">
+          <li>Climbing</li><li>Off-roading</li><li>Nature</li><li>Stoicism</li><li>Upanishads</li>
+        </ul>
+        <blockquote class="quote-paper">
+          For things we have to learn before doing them, we learn by doing them.
+          <cite>Aristotle &middot; Nicomachean Ethics</cite>
+        </blockquote>
+      </div>
+      <figure class="about2-photo">
+        <img src="climbing.jpg" alt="Ishan Raonka lead-climbing a sandstone wall" loading="lazy" width="1300" height="1950" />
+        <figcaption>Field log &middot; BADAMI crag, 12 August 2024</figcaption>
+      </figure>
+    </div>
+
+    <div class="fieldnotes">
+      <p class="eyebrow">Field notes</p>
+      <div class="filmstrip">
+        <figure><img src="adv-stars.jpg" alt="A sky full of stars over a dark treeline" loading="lazy" width="1000" height="562" /><figcaption>Under the stars &middot; Jaisalmer</figcaption></figure>
+        <figure><img src="adv-valley.jpg" alt="Boots looking out over a green valley" loading="lazy" width="1000" height="750" /><figcaption>The long view &middot; Pabe Maharashtra</figcaption></figure>
+        <figure><img src="adv-camel.jpg" alt="Resting against a camel in the desert" loading="lazy" width="1000" height="730" /><figcaption>Desert crossing &middot; Thar Desert</figcaption></figure>
+        <figure><img src="adv-bikes.jpg" alt="Motorcycles parked on a grassy trail in the hills" loading="lazy" width="1000" height="813" /><figcaption>End of the trail &middot; adharne Maharashtra</figcaption></figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="wrap reveal">
+    <p class="eyebrow">&sect; 04 &middot; Contact</p>
+    <h2>Let's find the way.</h2>
+    <p class="lead">If it involves computers, wild places, and a bit of risk, let's find the way. Reach out.</p>
+    <p class="note">Open to PhD conversations, research collaboration, and good problems.</p>
+    <div class="contact-links">
+      <a href="mailto:ishan.raonka@gmail.com">
+        <span class="ckey">Email</span>
+        <span class="cval">ishan.raonka@gmail.com</span>
+      </a>
+      <a href="https://github.com/raonka" target="_blank" rel="noopener">
+        <span class="ckey">GitHub</span>
+        <span class="cval">github.com/<span>raonka</span></span>
+      </a>
+      <a href="https://www.linkedin.com/in/ishan-raonka/" target="_blank" rel="noopener">
+        <span class="ckey">LinkedIn</span>
+        <span class="cval">in/<span>ishan-raonka</span></span>
+      </a>
+      <a href="#" target="_blank" rel="noopener">
+        <span class="ckey">CV</span>
+        <span class="cval">Download <span>&darr;</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="foot-brand">
+    <svg class="logo-sm" viewBox="0 0 375 375" aria-hidden="true"><path fill="currentColor" d="M 207.632812 205.941406 L 314.183594 114.378906 L 314.183594 37.535156 L 52.3125 37.535156 L 52.3125 220.71875 L 117.425781 167.519531 L 117.425781 101.078125 L 237.046875 101.078125 L 52.3125 253.230469 L 52.3125 337.464844 L 157.382812 247.320312 L 240.191406 337.464844 L 323.0625 337.464844 Z"/></svg>
+    Ishan Raonka
+  </span>
+  <span>25.28962&deg;N &middot; 75.93739&deg;E</span>
+  <span>&copy; <span id="yr"></span> &middot; Built as a single file.</span>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  (function(){
+    var path = document.getElementById('route');
+    if(path){
+      var rover = document.getElementById('rover');
+      var rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var L = path.getTotalLength();
+      var place = function(p){
+        var pt = path.getPointAtLength(p*L);
+        var pt2 = path.getPointAtLength(Math.min(p*L + 1, L));
+        var ang = Math.atan2(pt2.y - pt.y, pt2.x - pt.x) * 180/Math.PI;
+        rover.setAttribute('transform', 'translate('+pt.x+','+pt.y+') rotate('+ang+')');
+      };
+      if(rm){ place(1); } else {
+        var dur=7000, delay=600, start=null;
+        var frame=function(t){
+          if(start===null) start=t;
+          var el=t-start-delay;
+          if(el<0){ place(0); requestAnimationFrame(frame); return; }
+          var p=Math.min(el/dur,1); place(p);
+          if(p<1) requestAnimationFrame(frame);
+        };
+        requestAnimationFrame(frame);
+      }
+    }
+  })();
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!reduce && 'IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold:.12 });
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  } else { document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in')); }
+</script>
+</body>
+</html>
