@@ -1,2 +1,9 @@
 # Local editor and preview tooling
 .claude/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
