@@ -56,7 +56,26 @@
   .nav-links a{ font-family:var(--mono); font-size:.74rem; letter-spacing:.1em; text-transform:uppercase;
     color:var(--on-dark-dim); text-decoration:none; transition:color .2s; }
   .nav-links a:hover{ color:var(--signal); }
-  @media (max-width:620px){ .nav-links{ display:none; } .brand span{ font-size:.72rem; } }
+  .nav-toggle{ display:none; }
+  @media (max-width:620px){
+    .brand span{ font-size:.72rem; }
+    .nav-toggle{ display:flex; flex-direction:column; justify-content:center; gap:5px;
+      width:42px; height:42px; padding:10px; background:none; border:1px solid var(--line-dark);
+      border-radius:4px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    .nav-toggle span{ display:block; width:100%; height:1.5px; background:var(--on-dark);
+      transition:transform .25s ease, opacity .2s ease; }
+    nav.open .nav-toggle span:nth-child(1){ transform:translateY(6.5px) rotate(45deg); }
+    nav.open .nav-toggle span:nth-child(2){ opacity:0; }
+    nav.open .nav-toggle span:nth-child(3){ transform:translateY(-6.5px) rotate(-45deg); }
+    .nav-links{ position:absolute; top:100%; left:0; right:0; flex-direction:column; gap:0;
+      background:rgba(13,41,34,.97); backdrop-filter:blur(10px); border-bottom:1px solid var(--line-dark);
+      padding:.2rem var(--pad) 1rem; opacity:0; visibility:hidden; transform:translateY(-8px);
+      pointer-events:none; transition:opacity .2s ease, transform .2s ease, visibility .2s; }
+    nav.open .nav-links{ opacity:1; visibility:visible; transform:none; pointer-events:auto; }
+    .nav-links a{ padding:.95rem .2rem; font-size:.82rem; letter-spacing:.14em;
+      border-top:1px solid var(--line-dark); }
+    .nav-links a:first-child{ border-top:none; }
+  }
 
   section{ padding:var(--sec) var(--pad); }
   .wrap{ max-width:1180px; margin:0 auto; }
@@ -108,7 +127,23 @@
   .lbl-serif{ font-family:var(--serif); font-style:italic; fill:var(--on-dark); }
   .lbl-mono{ font-family:var(--mono); fill:var(--signal); letter-spacing:.05em; }
   .lbl-mono-dim{ font-family:var(--mono); fill:var(--haze); letter-spacing:.08em; }
-  @media (max-width:700px){ .hero-detail{ display:none; } }
+  /* mobile hero: a subtle full-bleed map sits behind the headline (text left, route
+     to the right) — the same split as desktop, folded into a portrait frame. */
+  @media (max-width:700px){
+    .hero{ justify-content:flex-start; padding:1.8rem var(--pad) 3rem; }
+    .hero-coord{ font-size:clamp(.52rem,2.4vw,.62rem); letter-spacing:.03em; margin-bottom:1.4rem; white-space:nowrap; }
+    .hero-hello{ font-size:clamp(1.6rem,1.2rem + 3vw,2.1rem); max-width:17ch; margin-bottom:1.3rem; }
+    .hero-sub{ font-family:var(--serif); font-size:1.05rem; line-height:1.5; max-width:34ch; margin-bottom:2rem; }
+    .hero-bg{ opacity:.6; }                      /* keep the map subtle behind the text */
+    .hero-bg text{ display:none; }               /* drop the small map labels on phones */
+    .hero::after{                                 /* scrim: darker on the left where the text lives */
+      content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+      background:
+        linear-gradient(90deg, rgba(13,41,34,.92) 0%, rgba(13,41,34,.74) 44%, rgba(13,41,34,.3) 74%, rgba(13,41,34,.04) 100%),
+        linear-gradient(180deg, rgba(13,41,34,.6) 0%, rgba(13,41,34,0) 26%, rgba(13,41,34,0) 78%, rgba(13,41,34,.55) 100%); }
+    .hero .wrap{ position:relative; z-index:2; }
+    .scrollcue{ z-index:2; }
+  }
 
   /* PROJECTS */
   .proj-head h2{ font-size:clamp(2rem,1.4rem + 2.6vw,3.4rem); }
@@ -219,6 +254,56 @@
   .foot-brand{ display:flex; align-items:center; gap:.5rem; color:var(--on-dark); }
   .foot-brand .logo-sm{ width:16px; height:16px; color:var(--haze); }
 
+  /* ════ ENHANCEMENTS: route thread · waypoints · stagger · micro-interactions ════ */
+
+  /* a dotted survey line threading the sections together into one journey */
+  .thread{ position:relative; }
+  .thread::before{ content:""; position:absolute; left:-.9rem; top:calc(-1 * var(--sec)); bottom:calc(-1 * var(--sec));
+    width:1.5px; background-image:repeating-linear-gradient(to bottom, var(--signal) 0 5px, transparent 5px 12px);
+    opacity:.4; pointer-events:none; }
+  .paper .thread::before{ opacity:.52; }
+  #contact .thread::before{ bottom:auto; height:calc(var(--sec) + 1.1rem); }  /* the route arrives, then stops */
+
+  /* section markers become waypoints that sit on the thread */
+  .eyebrow.waypoint{ position:relative; }
+  .eyebrow.waypoint::before{ content:""; position:absolute; left:-.9rem; top:50%; transform:translateX(-50%);
+    width:11px; height:11px; margin-top:-5.5px; border-radius:50%; border:1.5px solid var(--signal);
+    background:var(--ink); opacity:1; }
+  .paper .eyebrow.waypoint::before{ background:var(--paper); }
+  .eyebrow.waypoint::after{ content:""; position:absolute; left:-.9rem; top:50%; transform:translateX(-50%);
+    width:3px; height:3px; margin-top:-1.5px; border-radius:50%; background:var(--signal); }
+
+  /* contact = destination: a larger, gently pulsing marker where the journey ends */
+  #contact .eyebrow.waypoint::before{ width:15px; height:15px; margin-top:-7.5px; }
+  #contact .eyebrow.waypoint::after{ width:5px; height:5px; margin-top:-2.5px; animation:dest 2.8s ease-out infinite; }
+  @keyframes dest{
+    0%{ box-shadow:0 0 0 0 rgba(224,163,82,.45); } 70%{ box-shadow:0 0 0 10px rgba(224,163,82,0); }
+    100%{ box-shadow:0 0 0 0 rgba(224,163,82,0); } }
+
+  /* staggered reveal of grouped items */
+  .stagger > *{ opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
+  .reveal.in .stagger > *{ opacity:1; transform:none; }
+  .reveal.in .stagger > *:nth-child(2){ transition-delay:.09s; }
+  .reveal.in .stagger > *:nth-child(3){ transition-delay:.18s; }
+  .reveal.in .stagger > *:nth-child(4){ transition-delay:.27s; }
+  .reveal.in .stagger > *:nth-child(5){ transition-delay:.36s; }
+  .reveal.in .stagger > *:nth-child(6){ transition-delay:.45s; }
+
+  /* micro-interactions */
+  .feature-photo{ overflow:hidden; }
+  .feature-photo img{ transition:transform .6s ease, filter .6s ease; filter:saturate(.9); }
+  .feature-photo:hover img{ transform:scale(1.04); filter:saturate(1.06); }
+  .about2-photo{ overflow:hidden; border-radius:4px; }
+  .about2-photo img{ transition:transform .6s ease; }
+  .about2-photo:hover img{ transform:scale(1.03); }
+  .filmstrip .shot{ display:block; overflow:hidden; border-radius:4px; border:1px solid var(--line-paper); }
+  .filmstrip .shot img{ border:0; border-radius:0; transition:transform .5s ease; }
+  .filmstrip figure:hover .shot img{ transform:scale(1.06); }
+  .contact-links .cval{ position:relative; display:inline-block; }
+  .contact-links .cval::after{ content:""; position:absolute; left:0; right:0; bottom:-4px; height:1px;
+    background:var(--signal); transform:scaleX(0); transform-origin:left; transition:transform .35s ease; }
+  .contact-links a:hover .cval::after{ transform:scaleX(1); }
+
   .reveal{ opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
   .reveal.in{ opacity:1; transform:none; }
   a:focus-visible,.btn:focus-visible{ outline:2px solid var(--signal); outline-offset:3px; border-radius:2px; }
@@ -227,6 +312,9 @@
     .route,.wp,#rover,.node-ring,.rover-beacon,.scrollcue span{ animation:none !important; }
     .route{ stroke-dashoffset:0; } #rover,.wp{ opacity:1; transform:none; } .node-ring{ opacity:.4; }
     .reveal{ transition:none; opacity:1; transform:none; }
+    .stagger > *{ opacity:1 !important; transform:none !important; transition:none !important; }
+    #contact .eyebrow.waypoint::after{ animation:none !important; }
+    .feature-photo img,.about2-photo img,.filmstrip .shot img,.contact-links .cval::after{ transition:none !important; }
   }
 </style>
 </head>
@@ -238,7 +326,10 @@
     <svg class="logo" viewBox="0 0 375 375" aria-hidden="true"><path fill="currentColor" d="M 207.632812 205.941406 L 314.183594 114.378906 L 314.183594 37.535156 L 52.3125 37.535156 L 52.3125 220.71875 L 117.425781 167.519531 L 117.425781 101.078125 L 237.046875 101.078125 L 52.3125 253.230469 L 52.3125 337.464844 L 157.382812 247.320312 L 240.191406 337.464844 L 323.0625 337.464844 Z"/></svg>
     <span>Ishan Raonka</span>
   </a>
-  <div class="nav-links">
+  <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="nav-links">
     <a href="#work">Work</a>
     <a href="#skills">Skills</a>
     <a href="#about">About</a>
@@ -426,9 +517,9 @@
 
 <!-- WORK -->
 <section class="paper" id="work">
-  <div class="wrap reveal">
+  <div class="wrap reveal thread">
     <div class="proj-head">
-      <p class="eyebrow">&sect; 01 &middot; Selected work</p>
+      <p class="eyebrow waypoint">&sect; 01 &middot; Selected work</p>
       <h2>Things I've built and broken.</h2>
     </div>
     <p class="proj-intro">One thread runs through these: take something that works in clean conditions, then push it until the real world pushes back. That push is what's pulling me toward field robotics, where almost nothing stays clean.</p>
@@ -451,7 +542,7 @@
       </figure>
     </div>
 
-    <div class="proj-grid">
+    <div class="proj-grid stagger">
       <div class="card">
         <span class="num">PROJECT 02 &middot; CAPSTONE</span>
         <h3>Car Brand &amp; Plate Logger</h3>
@@ -476,11 +567,11 @@
 
 <!-- SKILLS -->
 <section class="skills" id="skills">
-  <div class="wrap reveal">
-    <p class="eyebrow">&sect; 02 &middot; What I work with</p>
+  <div class="wrap reveal thread">
+    <p class="eyebrow waypoint">&sect; 02 &middot; What I work with</p>
     <h2>A software base, aimed at hardware.</h2>
     <p class="skills-intro">A software and AI foundation I'm now pointing at the physical world. Deepest in code and computer vision, newest in embedded systems and sensors.</p>
-    <ul class="skills-list">
+    <ul class="skills-list stagger">
       <li><span class="lbl">Languages</span><span class="val">C++ &middot; Python &middot; Java</span></li>
       <li><span class="lbl">AI &amp; perception</span><span class="val">Deep learning &middot; Computer vision (OpenCV) &middot; TensorFlow &middot; Real-time detection (ResNet, MobileNet)</span></li>
       <li><span class="lbl">Hardware &amp; embedded <span class="cur">building toward</span></span><span class="val">LoRa / SX1280 &middot; Embedded firmware &middot; RF ranging &middot; ESP32</span></li>
@@ -492,8 +583,8 @@
 
 <!-- ABOUT -->
 <section class="paper about2" id="about">
-  <div class="wrap reveal">
-    <p class="eyebrow">&sect; 03 &middot; About</p>
+  <div class="wrap reveal thread">
+    <p class="eyebrow waypoint">&sect; 03 &middot; About</p>
     <h2>The short version: an engineer who got restless behind a screen.</h2>
     <div class="about2-grid">
       <div>
@@ -520,11 +611,11 @@
 
     <div class="fieldnotes">
       <p class="eyebrow">Field notes</p>
-      <div class="filmstrip">
-        <figure><img src="adv-stars.jpg" alt="A sky full of stars over a dark treeline" loading="lazy" width="1000" height="562" /><figcaption>Under the stars &middot; Jaisalmer</figcaption></figure>
-        <figure><img src="adv-valley.jpg" alt="Boots looking out over a green valley" loading="lazy" width="1000" height="750" /><figcaption>The long view &middot; Pabe Maharashtra</figcaption></figure>
-        <figure><img src="adv-camel.jpg" alt="Resting against a camel in the desert" loading="lazy" width="1000" height="730" /><figcaption>Desert crossing &middot; Thar Desert</figcaption></figure>
-        <figure><img src="adv-bikes.jpg" alt="Motorcycles parked on a grassy trail in the hills" loading="lazy" width="1000" height="813" /><figcaption>End of the trail &middot; adharne Maharashtra</figcaption></figure>
+      <div class="filmstrip stagger">
+        <figure><span class="shot"><img src="adv-stars.jpg" alt="A sky full of stars over a dark treeline" loading="lazy" width="1000" height="562" /></span><figcaption>Under the stars &middot; Jaisalmer</figcaption></figure>
+        <figure><span class="shot"><img src="adv-valley.jpg" alt="Boots looking out over a green valley" loading="lazy" width="1000" height="750" /></span><figcaption>The long view &middot; Pabe Maharashtra</figcaption></figure>
+        <figure><span class="shot"><img src="adv-camel.jpg" alt="Resting against a camel in the desert" loading="lazy" width="1000" height="730" /></span><figcaption>Desert crossing &middot; Thar Desert</figcaption></figure>
+        <figure><span class="shot"><img src="adv-bikes.jpg" alt="Motorcycles parked on a grassy trail in the hills" loading="lazy" width="1000" height="813" /></span><figcaption>End of the trail &middot; adharne Maharashtra</figcaption></figure>
       </div>
     </div>
   </div>
@@ -532,12 +623,12 @@
 
 <!-- CONTACT -->
 <section class="contact" id="contact">
-  <div class="wrap reveal">
-    <p class="eyebrow">&sect; 04 &middot; Contact</p>
+  <div class="wrap reveal thread">
+    <p class="eyebrow waypoint">&sect; 04 &middot; Contact</p>
     <h2>Let's find the way.</h2>
     <p class="lead">If it involves computers, wild places, and a bit of risk, let's find the way. Reach out.</p>
     <p class="note">Open to PhD conversations, research collaboration, and good problems.</p>
-    <div class="contact-links">
+    <div class="contact-links stagger">
       <a href="mailto:ishan.raonka@gmail.com">
         <span class="ckey">Email</span>
         <span class="cval">ishan.raonka@gmail.com</span>
@@ -569,6 +660,42 @@
 
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // Mobile navigation: toggle the dropdown menu open/closed.
+  (function(){
+    var nav = document.querySelector('nav');
+    var toggle = nav && nav.querySelector('.nav-toggle');
+    if(!toggle) return;
+    var set = function(open){
+      nav.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    };
+    toggle.addEventListener('click', function(){ set(!nav.classList.contains('open')); });
+    nav.querySelectorAll('.nav-links a').forEach(function(a){
+      a.addEventListener('click', function(){ set(false); });
+    });
+  })();
+
+  // Re-frame the hero map on narrow screens so the route + destination fit and
+  // stay legible, instead of the wide desktop framing cropping them off-screen.
+  (function(){
+    var svg = document.querySelector('.hero-bg');
+    if(!svg) return;
+    var mq = window.matchMedia('(max-width:700px)');
+    var apply = function(){
+      if(mq.matches){
+        svg.setAttribute('viewBox','800 40 430 860');
+        svg.setAttribute('preserveAspectRatio','xMidYMid slice');
+      } else {
+        svg.setAttribute('viewBox','0 0 1440 900');
+        svg.setAttribute('preserveAspectRatio','xMidYMid slice');
+      }
+    };
+    apply();
+    mq.addEventListener ? mq.addEventListener('change', apply) : mq.addListener(apply);
+  })();
+
   (function(){
     var path = document.getElementById('route');
     if(path){
