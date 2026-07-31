@@ -45,6 +45,25 @@
     padding:.6rem 1rem; font-family:var(--mono); font-size:.8rem; border-radius:0 0 4px 0; }
   .skip:focus{ left:0; }
 
+  /* splash: the survey boots up before the map is revealed */
+  #splash{ position:fixed; inset:0; z-index:200; background:var(--ink); display:flex;
+    align-items:center; justify-content:center; transition:opacity .55s ease, visibility .55s; }
+  #splash.done{ opacity:0; visibility:hidden; pointer-events:none; }
+  .splash-inner{ display:flex; flex-direction:column; align-items:center; gap:1.2rem; }
+  .splash-dial{ position:relative; width:104px; height:104px; display:flex; align-items:center; justify-content:center; }
+  .splash-dial::before{ content:""; position:absolute; inset:0; border-radius:50%;
+    border:1px dashed rgba(136,164,151,.45); animation:dial 7s linear infinite; }
+  .splash-dial::after{ content:""; position:absolute; top:-2.5px; left:50%; width:5px; height:5px;
+    margin-left:-2.5px; border-radius:50%; background:var(--signal); }
+  .splash-logo{ width:52px; height:52px; color:var(--paper); animation:coin 1.4s cubic-bezier(.45,.05,.35,.95) infinite; }
+  @keyframes coin{ to{ transform:perspective(420px) rotateY(360deg); } }
+  @keyframes dial{ to{ transform:rotate(360deg); } }
+  .splash-tag{ font-family:var(--mono); font-size:.6rem; letter-spacing:.32em; text-transform:uppercase;
+    color:var(--haze); margin:0; animation:tagblink 1.5s ease-in-out infinite alternate; }
+  @keyframes tagblink{ from{ opacity:.45; } to{ opacity:1; } }
+  /* hold the hero journey until the splash lifts */
+  .booting .route,.booting .wp,.booting .node-ring,.booting #rover,.booting .route-pulse{ animation-play-state:paused; }
+
   /* nav */
   nav{ position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
     padding:.9rem var(--pad); background:rgba(13,41,34,.72); backdrop-filter:blur(10px); border-bottom:1px solid var(--line-dark); }
@@ -112,6 +131,12 @@
   .route{ stroke:var(--signal); stroke-width:1.6; fill:none; opacity:.85; stroke-linecap:round;
     stroke-dasharray:1000; stroke-dashoffset:1000; animation:draw 7s linear .6s forwards; }
   @keyframes draw{ to{ stroke-dashoffset:0; } }
+  /* after the route is drawn, a signal packet travels it every few seconds */
+  .route-pulse{ stroke:#f6d9a8; stroke-width:2; fill:none; stroke-linecap:round; opacity:0;
+    stroke-dasharray:30 970; stroke-dashoffset:30; animation:signal 4.2s linear 8.4s infinite; }
+  @keyframes signal{
+    0%{ stroke-dashoffset:30; opacity:0; } 7%{ opacity:.9; }
+    80%{ opacity:.9; } 96%{ opacity:0; } 100%{ stroke-dashoffset:-970; opacity:0; } }
   .wp{ opacity:0; animation:fadeUp .8s ease forwards; }
   .wp.q{ animation-delay:1.6s; } .wp.w1{ animation-delay:5.2s; } .wp.w2{ animation-delay:3.4s; }
   .wp.w3{ animation-delay:2.1s; } .wp.here{ animation-delay:7.0s; } .wp.rune{ animation-delay:4.4s; }
@@ -124,25 +149,47 @@
   @keyframes roverShow{ to{ opacity:1; } }
   .rover-beacon{ animation:beacon 1.6s ease-in-out infinite; transform-origin:center; }
   @keyframes beacon{ 0%,100%{ opacity:1;} 50%{ opacity:.35;} }
+  .rover-halo{ animation:halo 1.6s ease-in-out infinite; }
+  @keyframes halo{ 0%,100%{ opacity:.5; } 50%{ opacity:.12; } }
   .lbl-serif{ font-family:var(--serif); font-style:italic; fill:var(--on-dark); }
   .lbl-mono{ font-family:var(--mono); fill:var(--signal); letter-spacing:.05em; }
   .lbl-mono-dim{ font-family:var(--mono); fill:var(--haze); letter-spacing:.08em; }
+  /* the night sky breathes: slow staggered twinkle */
+  .stars circle{ animation:twinkle 4.6s ease-in-out infinite; }
+  .stars circle:nth-child(2n){ animation-delay:1.2s; animation-duration:5.4s; }
+  .stars circle:nth-child(3n){ animation-delay:2.4s; }
+  .stars circle:nth-child(5n){ animation-delay:3.2s; animation-duration:6.2s; }
+  @keyframes twinkle{ 0%,100%{ opacity:1; } 50%{ opacity:.22; } }
   /* mobile hero: a subtle full-bleed map sits behind the headline (text left, route
      to the right) — the same split as desktop, folded into a portrait frame. */
   @media (max-width:700px){
-    .hero{ justify-content:flex-start; padding:1.8rem var(--pad) 3rem; }
-    .hero-coord{ font-size:clamp(.52rem,2.4vw,.62rem); letter-spacing:.03em; margin-bottom:1.4rem; white-space:nowrap; }
-    .hero-hello{ font-size:clamp(1.6rem,1.2rem + 3vw,2.1rem); max-width:17ch; margin-bottom:1.3rem; }
-    .hero-sub{ font-family:var(--serif); font-size:1.05rem; line-height:1.5; max-width:34ch; margin-bottom:2rem; }
-    .hero-bg{ opacity:.6; }                      /* keep the map subtle behind the text */
+    .hero{ justify-content:flex-start; min-height:calc(100svh - 4.5rem); padding:1.6rem var(--pad) 4.2rem; }
+    .hero-coord{ font-size:clamp(.52rem,2.4vw,.62rem); letter-spacing:.03em; margin-bottom:1.3rem; white-space:nowrap; }
+    .hero-hello{ font-size:clamp(1.45rem,1.05rem + 2.9vw,1.95rem); line-height:1.28; max-width:24ch; margin-bottom:1.2rem; }
+    .hero-sub{ font-family:var(--serif); font-size:1rem; line-height:1.55; max-width:36ch; margin-bottom:1.9rem; }
+    .cta-row{ display:grid; grid-template-columns:1fr 1fr; gap:.8rem; max-width:22rem; }
+    .btn{ justify-content:center; padding:.85rem .6rem; }
+    /* a calmer map: fewer marks, clearer route */
+    .hero-bg{ opacity:.55; transform-origin:62% 38%; animation:drift 26s ease-in-out infinite alternate; }
     .hero-bg text{ display:none; }               /* drop the small map labels on phones */
-    .hero::after{                                 /* scrim: darker on the left where the text lives */
+    .hero-bg .rune{ display:none; }              /* runes read as noise behind the sub-text */
+    .hero-bg .route{ stroke-width:2; opacity:1; }/* let the journey read clearly */
+    .hero-bg .route-pulse{ stroke-width:2.6; }
+    .hero::after{                                 /* one quiet scrim: dark up top, map below */
       content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
-      background:
-        linear-gradient(90deg, rgba(13,41,34,.92) 0%, rgba(13,41,34,.74) 44%, rgba(13,41,34,.3) 74%, rgba(13,41,34,.04) 100%),
-        linear-gradient(180deg, rgba(13,41,34,.6) 0%, rgba(13,41,34,0) 26%, rgba(13,41,34,0) 78%, rgba(13,41,34,.55) 100%); }
+      background:linear-gradient(180deg,
+        rgba(13,41,34,.9) 0%, rgba(13,41,34,.72) 34%, rgba(13,41,34,.28) 58%,
+        rgba(13,41,34,.05) 78%, rgba(13,41,34,.35) 100%); }
     .hero .wrap{ position:relative; z-index:2; }
     .scrollcue{ z-index:2; }
+  }
+  @keyframes drift{ to{ transform:scale(1.055) translate(-.8%,-.6%); } }
+  /* shorter laptop screens: tighten the hero so nav + hero fit one viewport */
+  @media (min-width:701px) and (max-height:850px){
+    .hero{ min-height:calc(100svh - 3.5rem); padding-top:4.5rem; padding-bottom:4rem; }
+    .hero-coord{ margin-bottom:1.2rem; }
+    .hero-hello{ font-size:clamp(1.7rem,1rem + 1.9vw,2.55rem); margin-bottom:1.3rem; }
+    .hero-sub{ margin-bottom:1.8rem; }
   }
 
   /* PROJECTS */
@@ -309,7 +356,9 @@
   a:focus-visible,.btn:focus-visible{ outline:2px solid var(--signal); outline-offset:3px; border-radius:2px; }
   @media (prefers-reduced-motion:reduce){
     html{ scroll-behavior:auto; }
-    .route,.wp,#rover,.node-ring,.rover-beacon,.scrollcue span{ animation:none !important; }
+    .route,.wp,#rover,.node-ring,.rover-beacon,.scrollcue span,.stars circle,
+    .hero-bg,.rover-halo,.splash-logo,.splash-dial::before,.splash-tag{ animation:none !important; }
+    .route-pulse{ animation:none !important; opacity:0; }
     .route{ stroke-dashoffset:0; } #rover,.wp{ opacity:1; transform:none; } .node-ring{ opacity:.4; }
     .reveal{ transition:none; opacity:1; transform:none; }
     .stagger > *{ opacity:1 !important; transform:none !important; transition:none !important; }
@@ -318,7 +367,16 @@
   }
 </style>
 </head>
-<body>
+<body class="booting">
+<div id="splash" aria-hidden="true">
+  <div class="splash-inner">
+    <div class="splash-dial">
+      <svg class="splash-logo" viewBox="0 0 375 375" aria-hidden="true"><path fill="currentColor" d="M 207.632812 205.941406 L 314.183594 114.378906 L 314.183594 37.535156 L 52.3125 37.535156 L 52.3125 220.71875 L 117.425781 167.519531 L 117.425781 101.078125 L 237.046875 101.078125 L 52.3125 253.230469 L 52.3125 337.464844 L 157.382812 247.320312 L 240.191406 337.464844 L 323.0625 337.464844 Z"/></svg>
+    </div>
+    <p class="splash-tag">Acquiring fix&hellip;</p>
+  </div>
+</div>
+<noscript><style>#splash{ display:none; } .booting .route,.booting .wp,.booting .node-ring,.booting #rover,.booting .route-pulse{ animation-play-state:running; }</style></noscript>
 <a class="skip" href="#work">Skip to content</a>
 
 <nav>
@@ -351,11 +409,13 @@
       </linearGradient>
       <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="7" result="n"/>
         <feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter>
+      <filter id="roverGlow" x="-250%" y="-250%" width="600%" height="600%">
+        <feGaussianBlur stdDeviation="4"/></filter>
     </defs>
 
     <rect width="1440" height="900" fill="url(#glow)"/>
 
-    <g fill="#cfe0d6" opacity="0.5">
+    <g class="stars" fill="#cfe0d6" opacity="0.5">
       <circle cx="300" cy="120" r="1.1"/><circle cx="520" cy="80" r="1"/><circle cx="760" cy="140" r="1.3"/>
       <circle cx="1020" cy="90" r="1"/><circle cx="1180" cy="150" r="1.1"/><circle cx="1330" cy="110" r="1"/>
       <circle cx="180" cy="240" r="1"/><circle cx="640" cy="60" r="1"/><circle cx="900" cy="118" r="1"/>
@@ -449,6 +509,7 @@
 
     <!-- ===== route, waypoints, rover ===== -->
     <path id="route" class="route" pathLength="1000" d="M700 824 C760 806 800 786 836 766 C894 730 950 706 992 704 C1060 700 1070 652 1018 642 C980 634 960 684 1002 708 C1034 722 1066 702 1082 654 C1102 598 1090 548 1114 506 C1134 470 1160 392 1185 320"/>
+    <path class="route-pulse" pathLength="1000" d="M700 824 C760 806 800 786 836 766 C894 730 950 706 992 704 C1060 700 1070 652 1018 642 C980 634 960 684 1002 708 C1034 722 1066 702 1082 654 C1102 598 1090 548 1114 506 C1134 470 1160 392 1185 320"/>
 
     <!-- waypoint marks -->
     <g class="map-amber" stroke-width="1.4" opacity="0.9">
@@ -492,6 +553,7 @@
 
     <!-- rover -->
     <g id="rover">
+      <circle class="rover-halo" r="9" fill="var(--signal)" filter="url(#roverGlow)"/>
       <g class="rover-beacon">
         <path d="M0 -8 L11 0 L0 8 L4 0 Z" fill="var(--signal)"/>
         <circle r="2.4" fill="#fff7e8"/>
@@ -661,6 +723,26 @@
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
 
+  // Splash: hold briefly while the page settles, then lift and start the journey.
+  (function(){
+    var splash = document.getElementById('splash');
+    if(!splash){ document.body.classList.remove('booting'); return; }
+    var rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var MIN = rm ? 0 : 1100, shown = performance.now(), done = false;
+    var finish = function(){
+      if(done) return; done = true;
+      var wait = Math.max(0, MIN - (performance.now() - shown));
+      setTimeout(function(){
+        splash.classList.add('done');
+        document.body.classList.remove('booting');
+        window.dispatchEvent(new Event('heroStart'));
+        setTimeout(function(){ splash.remove(); }, 700);
+      }, wait);
+    };
+    if(document.readyState === 'complete'){ finish(); }
+    else{ window.addEventListener('load', finish); setTimeout(finish, 3000); }
+  })();
+
   // Mobile navigation: toggle the dropdown menu open/closed.
   (function(){
     var nav = document.querySelector('nav');
@@ -717,7 +799,12 @@
           var p=Math.min(el/dur,1); place(p);
           if(p<1) requestAnimationFrame(frame);
         };
-        requestAnimationFrame(frame);
+        var go=function(){ requestAnimationFrame(frame); };
+        // hold the rover at the trailhead until the splash lifts
+        if(document.body.classList.contains('booting')){
+          window.addEventListener('heroStart', go, { once:true });
+          place(0);
+        } else { go(); }
       }
     }
   })();
