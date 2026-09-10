@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Ishan Raonka · Engineer moving into Field Robotics</title>
-<meta name="description" content="Engineer and AI builder moving into field robotics. I make code that leaves the screen, picks up sensors, and moves through the real world." />
+<title>Ishan Raonka · Engineer moving into Field Robotics &amp; Multi-Agent Coordination</title>
+<meta name="description" content="Engineer and AI builder moving into field robotics and multi-agent coordination. I make code that leaves the screen, picks up sensors, and moves through the real world." />
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20375%20375%22%3E%3Crect%20width%3D%22375%22%20height%3D%22375%22%20rx%3D%2270%22%20fill%3D%22%230d2922%22/%3E%3Cpath%20fill%3D%22%23ece5d4%22%20d%3D%22M%20207.632812%20205.941406%20L%20314.183594%20114.378906%20L%20314.183594%2037.535156%20L%2052.3125%2037.535156%20L%2052.3125%20220.71875%20L%20117.425781%20167.519531%20L%20117.425781%20101.078125%20L%20237.046875%20101.078125%20L%2052.3125%20253.230469%20L%2052.3125%20337.464844%20L%20157.382812%20247.320312%20L%20240.191406%20337.464844%20L%20323.0625%20337.464844%20Z%22/%3E%3C/svg%3E" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -105,6 +105,9 @@
   .hero{ position:relative; min-height:100svh; display:flex; flex-direction:column; justify-content:center;
     padding-top:6rem; padding-bottom:6rem; overflow:hidden; }
   .hero-bg{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+  /* On very wide, short viewports the map's `slice` crop eats its bottom band.
+     Shed the two deepest labels rather than let the section edge cut them in half. */
+  @media (min-aspect-ratio:11/5){ .hero-bg .deep{ display:none; } }
   .hero .wrap{ position:relative; z-index:2; width:100%; }
   .hero-coord{ font-family:var(--mono); font-size:.74rem; letter-spacing:.18em; color:var(--haze); margin-bottom:1.8rem; }
   .hero-hello{ font-family:var(--serif); font-weight:400; font-size:clamp(1.85rem,1.2rem + 2.3vw,3.2rem);
@@ -219,6 +222,9 @@
   .feature .num{ font-family:var(--mono); font-size:.72rem; color:var(--signal); letter-spacing:.14em; }
   .feature h3{ font-size:clamp(1.6rem,1.2rem + 1.4vw,2.3rem); margin:.8rem 0 1rem; color:var(--on-dark); }
   .feature p{ color:var(--on-dark-dim); font-size:.97rem; }
+  .feature-status{ margin:1.5rem 0 0; padding-top:1.1rem; border-top:1px solid var(--line-dark);
+    font-family:var(--mono); font-size:.74rem; line-height:1.75; letter-spacing:.02em; color:var(--on-dark-dim); }
+  .feature-status span{ color:var(--signal); letter-spacing:.14em; text-transform:uppercase; margin-right:.5rem; }
   .feature .tags{ margin:1.3rem 0 0; display:flex; flex-wrap:wrap; gap:.5rem; }
   .feature .tag{ color:var(--on-dark); border:1px solid var(--line-dark); }
   .feature-link{ font-family:var(--mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase;
@@ -397,7 +403,7 @@
 
 <!-- HERO -->
 <header class="hero" id="top">
-  <svg class="hero-bg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <svg class="hero-bg" viewBox="0 60 1440 840" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
     <defs>
       <radialGradient id="glow" cx="70%" cy="44%" r="62%">
         <stop offset="0%" stop-color="#143e33"/><stop offset="100%" stop-color="#0c2620"/>
@@ -525,13 +531,13 @@
     <text class="lbl-serif" x="902" y="512" font-size="22" opacity="0.95">The Lonely Mountain</text>
     <text class="wp q lbl-serif" x="1112" y="224" font-size="16" fill="#88a497">here be dragons</text>
     <text class="wp w1 lbl-mono" x="1232" y="700" font-size="13">RIDGE?</text>
-    <text class="wp w3 lbl-serif" x="770" y="788" font-size="18">Kachori Stall</text>
-    <text class="lbl-serif" x="972" y="742" font-size="17" fill="#88a497" opacity="0.85">Mukundra Forest</text>
+    <text class="wp w3 lbl-serif" x="770" y="734" font-size="18">Kachori Stall</text>
+    <text class="lbl-serif" x="972" y="736" font-size="17" fill="#88a497" opacity="0.85">Mukundra Forest</text>
     <path id="chambalGuide" d="M716 506 C752 566 708 618 742 686" fill="none" stroke="none"/>
     <text class="lbl-serif" font-size="16" fill="#88a497" opacity="0.85" letter-spacing="1.5"><textPath href="#chambalGuide" startOffset="5%">Chambal</textPath></text>
     <text class="wp rune lbl-mono-dim" x="1000" y="556" font-size="9.5" text-anchor="middle" opacity="0.65">&#8220;uncharted&#8221;</text>
-    <text class="wp q lbl-serif" x="1086" y="790" font-size="22" opacity="0.92">Here be questions</text>
-    <text class="wp q lbl-serif" x="1086" y="812" font-size="13" fill="#88a497">terra incognita</text>
+    <text class="wp q lbl-serif" x="1150" y="732" font-size="22" opacity="0.92">Here be questions</text>
+    <text class="wp q lbl-serif deep" x="1150" y="760" font-size="13" fill="#88a497">terra incognita</text>
 
     <!-- end node -->
     <circle class="node-ring"   cx="1185" cy="320" r="14" fill="none" stroke="var(--signal)" stroke-width="1.4"/>
@@ -560,7 +566,7 @@
       </g>
     </g>
 
-    <text class="lbl-mono-dim" x="1382" y="858" text-anchor="end" font-size="11" opacity="0.7">SURVEY &#183; 25.28962&#176;N 75.93739&#176;E</text>
+    <text class="lbl-mono-dim deep" x="1382" y="792" text-anchor="end" font-size="11" opacity="0.7">SURVEY &#183; 25.28962&#176;N 75.93739&#176;E</text>
 
     </g>
     <rect width="1440" height="900" fill="url(#veil)"/>
@@ -584,19 +590,21 @@
       <p class="eyebrow waypoint">&sect; 01 &middot; Selected work</p>
       <h2>Things I've built and broken.</h2>
     </div>
-    <p class="proj-intro">One thread runs through these: take something that works in clean conditions, then push it until the real world pushes back. That push is what's pulling me toward field robotics, where almost nothing stays clean.</p>
+    <p class="proj-intro">One thread runs through these: take something that works in clean conditions, then push it until the real world pushes back. That push is what's pulling me toward field robotics and multi-agent coordination, where almost nothing stays clean and no machine ever gets the whole picture.</p>
 
     <div class="feature">
       <div class="feature-body">
         <span class="num">PROJECT 01 &middot; FLAGSHIP</span>
         <h3>Pack Pucks</h3>
-        <p>Pack Pucks started on a night ride. We were deep off-road in the dark, headlights bouncing off the trees, and it got easy to lose the rider behind you. I started wondering how a handful of cheap radios could keep a moving group aware of each other with no map and no signal.</p>
-        <p>That question became the project: a swarm of LilyGo T3-S3 nodes running SX1280 LoRa, working out peer-to-peer ranging and proximity from the ground up. Along the way came SF/BW tradeoffs, adaptive ranging profiles, and squeezing usable accuracy out of radios that cost almost nothing.</p>
-        <p>Pack Pucks taught me the hard part isn't the radio, it's everything the real world does to the signal. That gap, between what works on the bench and what survives in the field, is what I want to spend a PhD on, starting Fall 2027.</p>
+        <p>Pack Pucks started on a night ride. We were deep off-road in the dark, headlights bouncing off the trees, and it got easy to lose the rider behind you. I started wondering whether a few cheap radios could keep a moving group aware of each other with no map and no signal.</p>
+        <p>It began as an engineering build: LilyGo T3-S3 boards with SX1280 2.4&nbsp;GHz LoRa radios doing peer-to-peer time-of-flight ranging, with LED rings as a screenless proximity display. While reading the literature, I found a gap. Recent SX1280 field work compares ranging bandwidths with both nodes static, and explicitly leaves the moving case open.</p>
+        <p>So I turned the project into a paper, partly to fill that gap and partly to get a real taste of academic research before committing to a PhD. The paper is a platform and characterization study: open firmware and datasets on off-the-shelf hardware, a matched field comparison of 406.25&nbsp;kHz and 1625&nbsp;kHz bandwidths out to 300&nbsp;m with one node carried stop-and-go, a look at how simple filters affect stability, and a catalog of the ways ranging fails in the field.</p>
+        <p>The biggest lesson so far: the radio is the easy part. The hard part is everything the real world does to the signal.</p>
+        <p class="feature-status"><span>Status</span> In progress. Field data collection is underway. arXiv preprint targeted for October&nbsp;2026.</p>
         <div class="tags">
-          <span class="tag">LoRa SX1280</span><span class="tag">Embedded</span><span class="tag">Ranging</span><span class="tag">Localization</span>
+          <span class="tag">LoRa SX1280</span><span class="tag">Embedded</span><span class="tag">Time-of-flight ranging</span><span class="tag">Field study</span>
         </div>
-        <a class="feature-link" href="#" target="_blank" rel="noopener">See the build &rarr;</a>
+        <a class="feature-link" href="https://github.com/raonka/Pack-Puck" target="_blank" rel="noopener">See the build &rarr;</a>
       </div>
       <figure class="feature-photo">
         <img src="packpucks.jpg" alt="Night off-road ride through forest that sparked the Pack Pucks idea" loading="lazy" width="1100" height="1327" />
@@ -612,14 +620,14 @@
         <div class="tags"><span class="tag">Computer Vision</span><span class="tag">ResNet</span><span class="tag">OpenCV</span><span class="tag">TensorFlow</span></div>
       </div>
 
-      <a class="card" href="#" target="_blank" rel="noopener">
+      <div class="card">
         <span class="num">PROJECT 03</span>
         <h3>Backend at scale</h3>
         <p>Production REST services at an enterprise bank technology centre, leading the team's move from Spring Boot to Quarkus for faster startup and a path to native images.</p>
         <div class="tags"><span class="tag">Java</span><span class="tag">Quarkus</span><span class="tag">GraalVM</span></div>
-      </a>
+      </div>
 
-      <a class="card more" href="#" target="_blank" rel="noopener">
+      <a class="card more" href="https://github.com/raonka" target="_blank" rel="noopener">
         <span class="num">MORE</span>
         <h3>Everything else lives on GitHub <span class="arrow">&#8599;</span></h3>
       </a>
@@ -654,7 +662,7 @@
         <p>Off the keyboard I climb, ride, and get outdoors as often as I can. I read Stoic and Vedic philosophy to keep my ego on a short leash, and I'm relentlessly curious about how things actually work. Adventure, nature, and code keep turning out to be the same instinct: go where you don't have the map yet, and make one.</p>
         <dl class="facts">
           <dt>Now</dt><dd>Software Engineer, Lloyds Technology Centre</dd>
-          <dt>Next</dt><dd>PhD, field robotics, Fall 2027</dd>
+          <dt>Next</dt><dd>PhD, field robotics &amp; multi-agent coordination, Fall 2027</dd>
           <dt>Based</dt><dd>Hyderabad, India</dd>
         </dl>
         <ul class="threads">
@@ -703,7 +711,7 @@
         <span class="ckey">LinkedIn</span>
         <span class="cval">in/<span>ishan-raonka</span></span>
       </a>
-      <a href="#" target="_blank" rel="noopener">
+      <a href="https://docs.google.com/document/d/1VNdEGdKHzLmygFClYHt0dvGamQ0NWTEIPNVC_p3Ajzk/export?format=pdf" target="_blank" rel="noopener">
         <span class="ckey">CV</span>
         <span class="cval">Download <span>&darr;</span></span>
       </a>
@@ -770,7 +778,7 @@
         svg.setAttribute('viewBox','800 40 430 860');
         svg.setAttribute('preserveAspectRatio','xMidYMid slice');
       } else {
-        svg.setAttribute('viewBox','0 0 1440 900');
+        svg.setAttribute('viewBox','0 60 1440 840');
         svg.setAttribute('preserveAspectRatio','xMidYMid slice');
       }
     };
