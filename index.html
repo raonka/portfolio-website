@@ -225,6 +225,9 @@
   .feature-status{ margin:1.5rem 0 0; padding-top:1.1rem; border-top:1px solid var(--line-dark);
     font-family:var(--mono); font-size:.74rem; line-height:1.75; letter-spacing:.02em; color:var(--on-dark-dim); }
   .feature-status span{ color:var(--signal); letter-spacing:.14em; text-transform:uppercase; margin-right:.5rem; }
+  .feature-status a{ color:var(--signal); text-decoration:none; border-bottom:1px solid rgba(224,163,82,.4);
+    overflow-wrap:anywhere; }
+  .feature-status a:hover{ border-bottom-color:var(--signal); }
   .feature .tags{ margin:1.3rem 0 0; display:flex; flex-wrap:wrap; gap:.5rem; }
   .feature .tag{ color:var(--on-dark); border:1px solid var(--line-dark); }
   .feature-link{ font-family:var(--mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase;
@@ -597,10 +600,10 @@
         <span class="num">PROJECT 01 &middot; FLAGSHIP</span>
         <h3>Pack Pucks</h3>
         <p>Pack Pucks started on a night ride. We were deep off-road in the dark, headlights bouncing off the trees, and it got easy to lose the rider behind you. I started wondering whether a few cheap radios could keep a moving group aware of each other with no map and no signal.</p>
-        <p>It began as an engineering build: LilyGo T3-S3 boards with SX1280 2.4&nbsp;GHz LoRa radios doing peer-to-peer time-of-flight ranging, with LED rings as a screenless proximity display. While reading the literature, I found a gap. Recent SX1280 field work compares ranging bandwidths with both nodes static, and explicitly leaves the moving case open.</p>
-        <p>So I turned the project into a paper, partly to fill that gap and partly to get a real taste of academic research before committing to a PhD. The paper is a platform and characterization study: open firmware and datasets on off-the-shelf hardware, a matched field comparison of 406.25&nbsp;kHz and 1625&nbsp;kHz bandwidths out to 300&nbsp;m with one node carried stop-and-go, a look at how simple filters affect stability, and a catalog of the ways ranging fails in the field.</p>
-        <p>The biggest lesson so far: the radio is the easy part. The hard part is everything the real world does to the signal.</p>
-        <p class="feature-status"><span>Status</span> In progress. Field data collection is underway. arXiv preprint targeted for October&nbsp;2026.</p>
+        <p>It began as an engineering build: LilyGo T3-S3 boards with SX1280 2.4&nbsp;GHz radios doing peer-to-peer time-of-flight ranging, with LED rings as a screenless proximity display. Reading the literature, I found an empty cell. Every published SX1280 bandwidth comparison I could find was run with both nodes static; every result with a node in motion used a single bandwidth. Nobody had run the matched comparison with one node in hand.</p>
+        <p>So I turned it into a paper &mdash; partly to fill that cell, partly to find out whether I wanted to do research for a living. I did. The result is a platform and characterization study: open firmware and datasets on off-the-shelf hardware, a matched field comparison of 406.25&nbsp;kHz and 1625&nbsp;kHz out to 300&nbsp;m with one node carried stop-and-go, a look at how simple filters affect stability, and a catalog of the ways ranging fails in the field.</p>
+        <p>The measurement that carries it: at 1625&nbsp;kHz the range error stays inside &plusmn;5&nbsp;m across the whole 30&ndash;300&nbsp;m span; at 406.25&nbsp;kHz it runs 10&ndash;12&nbsp;m long, as a systematic bias rather than noise &mdash; for a cycle-time saving of under 5&nbsp;%. The radio turned out to be the easy part. The hard part was everything the real world does to the signal, and building a survey, an offload pipeline and a QC tool honest enough to tell the two apart.</p>
+        <p class="feature-status"><span>Status</span> The matched comparison is measured and analysed. A confirmatory second outing and a ground-truth error bound are outstanding. arXiv preprint targeted for October&nbsp;2026. Code and data: <a href="https://github.com/raonka/Pack-Puck" target="_blank" rel="noopener">github.com/raonka/Pack-Puck</a></p>
         <div class="tags">
           <span class="tag">LoRa SX1280</span><span class="tag">Embedded</span><span class="tag">Time-of-flight ranging</span><span class="tag">Field study</span>
         </div>
